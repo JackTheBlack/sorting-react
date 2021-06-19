@@ -1,55 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { Component, useState, useEffect } from "react";
 
 function SORT({ articles }) {
   const [aux, setAux] = useState([...articles]);
-  const [filter, setFilter] = useState({
-    upvote: false,
-    recent: false,
-  });
+  const [filter, setFilter] = useState("upvoted");
   const upVoted = () => {
-    setFilter((i) => {
-      return {
-        ...i,
-        upvote: true,
-        recent: false,
-      };
-    });
+    setFilter(" ");
+    setFilter("upvoted");
   };
   const recent = () => {
-    setFilter((i) => {
-      return {
-        ...i,
-        upvote: false,
-        recent: true,
-      };
-    });
+    setFilter(" ");
+    setFilter("date");
   };
 
   useEffect(() => {
-    if (filter.upvote) {
+    if (filter === "upvoted") {
+      console.log(filter);
+      setAux(" ");
       setAux([...articles]);
-      const newArr = articles.sort((a, b) => b.upvotes - a.upvotes);
+      const newArr = aux.sort((a, b) => b.upvotes - a.upvotes);
       setAux(newArr);
-    } else if (filter.recent) {
+    } else if (filter === "date") {
+      console.log(filter);
       setAux([...articles]);
-      const newArr = articles.sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-      );
-      setAux(newArr);
-    } else {
-      setAux([...articles]);
-      const newArr = articles.sort((a, b) => b.upvotes - a.upvotes);
+      const newArr = aux.sort((a, b) => new Date(b.date) - new Date(a.date));
       setAux(newArr);
     }
-  }, [filter, articles]);
+    setFilter(" ");
+  }, [filter, aux, articles]);
 
   return (
     <div>
-      <button data-testid="most-upvoted-link" onClick={upVoted}>
-        Most upVoted{" "}
-      </button>
       <button data-testid="most-recent-link" onClick={recent}>
-        Most Recents
+        Most Recent
+      </button>
+      <button data-testid="most-upvoted-link" onClick={upVoted}>
+        Most UpVoted
       </button>
       <table>
         <tr>
@@ -57,15 +42,16 @@ function SORT({ articles }) {
           <th>Upvotes</th>
           <th>Date</th>
         </tr>
-        {aux.map((item, index) => {
-          return (
-            <tr data-testid="article">
-              <td data-testid="article-title">{item.title}</td>{" "}
-              <td data-testid="article-upvotes">{item.upvotes}</td>
-              <td data-testid="article-date">{item.date}</td>
-            </tr>
-          );
-        })}
+        {aux &&
+          aux.map((i, index) => {
+            return (
+              <tr data-testid="article">
+                <td data-testid="article-title">{i.title}</td>{" "}
+                <td data-testid="article-upvotes">{i.upvotes}</td>
+                <td data-testid="article-date">{i.date}</td>
+              </tr>
+            );
+          })}
       </table>
     </div>
   );
